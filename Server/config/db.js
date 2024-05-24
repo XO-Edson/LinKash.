@@ -16,14 +16,4 @@ pool.on("error", (error) =>
   console.error("Database connection error", error.message)
 );
 
-/* (async () => {
-  try {
-    const client = await pool.connect();
-    console.log("Client connected for testing.");
-    client.release();
-  } catch (err) {
-    console.error("Error connecting for testing:", err.message);
-  }
-})(); */
-
 export default pool;

@@ -11,6 +11,7 @@ const verifyToken = (req, res, next) => {
 
   try {
     const verified = jwt.verify(token, process.env.ACCESS_TOKEN);
+
     req.userId = verified;
 
     next();
