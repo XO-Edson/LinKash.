@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import registerRoute from "./routes/registerRoute.js";
 import loginRoute from "./routes/loginRoute.js";
+import verifyToken from "./middleware/verifyToken.js";
 
 dotenv.config();
 

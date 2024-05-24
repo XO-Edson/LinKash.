@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import pool from "../config/db.js";
+import jwt from "jsonwebtoken";
 
 const register = async (req, res) => {
   const { first_name, last_name, email, password, username } = req.body;
@@ -12,10 +13,10 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      "INSERT INTO users (first_name, last_name, email, password, username) VALUES($1, $2, $3,$4,$5) RETURNING *",
+      "INSERT INTO users (first_name, last_name, email, password) VALUES($1, $2, $3,$4,$5) RETURNING *",
       [first_name, last_name, email, hashedPassword, username]
     );
-    console.log(result);
+    console.log(result.rows);
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -31,7 +32,7 @@ const login = async (req, res) => {
   }
 
   try {
-    const result = await db.query("SELECT * FROM users WHERE email =$1", [
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
       email,
     ]);
 
@@ -39,7 +40,8 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
     const user = result.rows[0];
-    const isValid = bcrypt.compare(password, user.password);
+
+    const isValid = await bcrypt.compare(password, user.password);
 
     if (!isValid) {
       return res.status(401).json({ message: "Invalid credentials" });
