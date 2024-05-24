@@ -13,7 +13,7 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      "INSERT INTO users (first_name, last_name, email, password) VALUES($1, $2, $3,$4,$5) RETURNING *",
+      "INSERT INTO users (first_name, last_name, email, password) VALUES($1, $2, $3, $4) RETURNING *",
       [first_name, last_name, email, hashedPassword]
     );
     console.log(result.rows);
