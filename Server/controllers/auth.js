@@ -53,7 +53,7 @@ const login = async (req, res) => {
     res.status(200).json({ user, token });
   } catch (error) {
     console.error(error.message);
-    return res.status(400).json({ message: "Error registering user" });
+    return res.status(400).json({ message: "Error logging in" });
   }
 };
 
