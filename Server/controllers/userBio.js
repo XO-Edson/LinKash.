@@ -7,7 +7,7 @@ const addUserBio = async (req, res) => {
   if (!username || !description)
     res.status(400).json({ message: "All fields required" });
 
-  // Check if the username already exists
+  /* CHECKING FOR DUPLICATE USERNAME */
   try {
     const usernameExists = await pool.query(
       "SELECT username FROM user_bio WHERE username = $1",
@@ -22,7 +22,7 @@ const addUserBio = async (req, res) => {
     return res.status(500).json({ message: "Error checking username" });
   }
 
-  // If username is unique, proceed with insertion
+  /* ADDING NEW USERNAME */
   try {
     const result = await pool.query(
       "INSERT INTO user_bio(user_id, username, description) VALUES ($1, $2, $3) RETURNING *",

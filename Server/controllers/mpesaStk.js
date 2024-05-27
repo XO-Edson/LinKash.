@@ -1,4 +1,5 @@
 import axios from "axios";
+import pool from "../config/db.js";
 
 /* ACCESS TOKEN FUNCTION */
 async function access(req, res, next) {
@@ -28,10 +29,17 @@ async function access(req, res, next) {
 }
 
 /* STK-Push FUNCTION */
-
 const stkPush = async (req, res) => {
+  /* GETTING SHORTCODE FROM DB */
+  const userId = req.userId.userId;
+  const result = await pool.query(
+    "SELECT shortcode FROM account_details WHERE user_id = $1",
+    [userId]
+  );
+  const shortcode = result.rows[0].shortcode;
+
   const data = {
-    ShortCode: 174379,
+    ShortCode: shortcode,
     phone: req.body.phone.substring(1),
     amount: req.body.amount,
     passkey: process.env.STKPUSH_KEY,
@@ -60,8 +68,8 @@ const stkPush = async (req, res) => {
     PartyA: `254${data.phone}`,
     PartyB: data.ShortCode,
     PhoneNumber: `254${data.phone}`,
-    CallBackURL: "https://mydomain.com/pat",
-    AccountReference: "MpesaTest",
+    CallBackURL: "https://a953-196-96-113-57.ngrok-free.app/stkCallback",
+    AccountReference: "Mpesa Test",
     TransactionDesc: "Test stk",
   };
 
@@ -85,4 +93,57 @@ const getPrompt = (req, res) => {
   res.status(200).json({ access_token: req.access_token });
 };
 
-export { getPrompt, access, stkPush };
+const saveToDatabase = async (values) => {
+  try {
+    const result = await pool.query(
+      "INSERT INTO transaction (merchant_request_id,checkout_request_id,result_code,result_description,amount,mpesa_receipt_number,balance,transaction_date,phone_number) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *",
+      [
+        values.MerchantRequestID,
+        values.CheckoutRequestID,
+        values.ResultCode,
+        values.ResultDesc,
+        values.Amount,
+        values.MpesaReceiptNumber,
+        values.Balance,
+        values.TransactionDate,
+        values.PhoneNumber,
+      ]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error({ error: "transaction missing" });
+  }
+};
+
+const saveTransaction = (req, res) => {
+  console.log(req.body);
+
+  const data = req.body.Body.stkCallback;
+  console.log(data);
+
+  if (!data || !data.CallbackMetadata || !data.CallbackMetadata.Item) {
+    console.error("Invalid transaction data");
+    return res.status(400).json({ error: "Invalid transaction data" });
+  }
+
+  const transaction = {
+    MerchantRequestID: data.MerchantRequestID,
+    CheckoutRequestID: data.CheckoutRequestID,
+    ResultCode: data.ResultCode,
+    ResultDesc: data.ResultDesc,
+    Amount: data.CallbackMetadata?.Item[0].Value,
+    MpesaReceiptNumber: data.CallbackMetadata?.Item[1].Value,
+    Balance: data.CallbackMetadata?.Item[2].Value,
+    TransactionDate: data.CallbackMetadata?.Item[3].Value,
+    PhoneNumber: data.CallbackMetadata?.Item[4].Value,
+  };
+
+  saveToDatabase(transaction);
+
+  console.log("Transaction saved");
+
+  res.sendStatus(200);
+};
+
+export { getPrompt, access, stkPush, saveTransaction };
