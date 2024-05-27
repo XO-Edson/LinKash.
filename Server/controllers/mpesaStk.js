@@ -89,10 +89,6 @@ const stkPush = async (req, res) => {
   }
 };
 
-const getPrompt = (req, res) => {
-  res.status(200).json({ access_token: req.access_token });
-};
-
 const saveToDatabase = async (values) => {
   try {
     const result = await pool.query(
@@ -146,4 +142,4 @@ const saveTransaction = (req, res) => {
   res.sendStatus(200);
 };
 
-export { getPrompt, access, stkPush, saveTransaction };
+export { access, stkPush, saveTransaction };
