@@ -22,9 +22,8 @@ app.use("/login", loginRoute);
 
 /* ROUTES */
 app.use("/addBio", verifyToken, userBio);
-app.use("/stkpush", verifyToken, access, stkPush);
 app.use("/accountDetails", verifyToken, accountsRoute);
-
+app.use("/stkpush", verifyToken, access, stkPush);
 app.use("/stkCallback", verifyToken, saveTransactionRoute);
 
 app.listen(4700, () => console.log("Server running on port 4700"));
