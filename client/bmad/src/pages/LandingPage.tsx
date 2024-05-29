@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import About from "./About";
+import Footer from "./Footer";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ function LandingPage() {
           <p> Launch a membership. Set up a shop!</p>
 
           <button
-            className="p-4 rounded-3xl bg-skyBlue font-bold my-6 text-slate-300"
+            className="p-4 rounded-3xl bg-skyBlue font-bold my-6 text-slate-300 scale"
             onClick={signUpPage}
           >
             Start my page
@@ -30,6 +31,7 @@ function LandingPage() {
         </div>
       </div>
       <About />
+      <Footer />
     </section>
   );
 }
