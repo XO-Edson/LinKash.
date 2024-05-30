@@ -6,6 +6,11 @@ function Navbar() {
   const signUpPage = () => {
     navigate("/signUp");
   };
+
+  const loginPage = () => {
+    navigate("/login");
+  };
+
   return (
     <nav className="flex justify-between items-center p-2 md:p-4 font-bold shadow-sm">
       <div className="space-x-2 hidden md:flex md:items-center">
@@ -18,7 +23,10 @@ function Navbar() {
         </h2>
       </div>
       <div className=" flex space-x-2">
-        <button className="px-4 py-2 rounded-3xl hover:bg-slate-400">
+        <button
+          className="px-4 py-2 rounded-3xl hover:bg-slate-400"
+          onClick={loginPage}
+        >
           Log in
         </button>
         <button

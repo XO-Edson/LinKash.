@@ -1,8 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
+import { useState } from "react";
 
 function Login() {
   const { email, setEmail, password, setPassword, login } = useAuthContext();
+
+  const [isLogin, setIsLogin] = useState(false);
+
+  const handleLogin = () => {
+    login(email, password, () => setIsLogin(true));
+  };
+
+  if (isLogin) {
+    return <Navigate to="/bio" />;
+  }
 
   return (
     <section>
@@ -23,7 +34,7 @@ function Login() {
 
       <article className="grid place-content-center h-screen">
         <div className="grid place-content-center mx-auto ">
-          <h1 className="font-bold text-4xl mb-5">Welcome Back</h1>
+          <h1 className="font-bold text-4xl mb-5">Welcome back</h1>
 
           <input
             type="text"
@@ -31,6 +42,7 @@ function Login() {
             placeholder="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <input
             type="password"
@@ -38,11 +50,12 @@ function Login() {
             placeholder="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
 
           <button
-            className="p-4 rounded-3xl bg-skyBlue font-bold my-6 text-slate-300 scale"
-            onClick={() => login(email, password)}
+            className="p-3 rounded-3xl bg-skyBlue font-bold my-6 text-slate-300 scale"
+            onClick={handleLogin}
           >
             LOGIN
           </button>
