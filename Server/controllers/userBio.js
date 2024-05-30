@@ -7,21 +7,6 @@ const addUserBio = async (req, res) => {
   if (!username || !description)
     res.status(400).json({ message: "All fields required" });
 
-  /* CHECKING FOR DUPLICATE USERNAME */
-  try {
-    const usernameExists = await pool.query(
-      "SELECT username FROM user_bio WHERE username = $1",
-      [username]
-    );
-
-    if (usernameExists.rows.length > 0) {
-      return res.status(400).json({ message: "Username already exists" });
-    }
-  } catch (error) {
-    console.error(error.message);
-    return res.status(500).json({ message: "Error checking username" });
-  }
-
   /* ADDING NEW USERNAME */
   try {
     const result = await pool.query(
@@ -36,4 +21,27 @@ const addUserBio = async (req, res) => {
   }
 };
 
-export default addUserBio;
+const checkUsername = async (req, res) => {
+  const { username } = req.body;
+
+  if (!username) return res.json({ message: "username required" });
+
+  /* CHECKING FOR DUPLICATE USERNAME */
+  try {
+    const usernameExists = await pool.query(
+      "SELECT username FROM user_bio WHERE username = $1",
+      [username]
+    );
+
+    if (usernameExists.rows.length > 0) {
+      return res.status(400).json({ message: "Username already exists" });
+    }
+
+    return res.status(200).json({ message: "Username available" });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ message: "Error checking username" });
+  }
+};
+
+export { addUserBio, checkUsername };

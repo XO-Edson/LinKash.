@@ -1,8 +1,10 @@
 import { Router } from "express";
-import addUserBio from "../controllers/userBio.js";
+import { checkUsername, addUserBio } from "../controllers/userBio.js";
 
 const router = Router();
 
 router.post("/", addUserBio);
+
+router.post("/check-username", checkUsername);
 
 export default router;

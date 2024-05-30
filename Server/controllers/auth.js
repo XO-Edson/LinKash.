@@ -3,9 +3,9 @@ import pool from "../config/db.js";
 import jwt from "jsonwebtoken";
 
 const register = async (req, res) => {
-  const { first_name, last_name, email, password } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
-  if (!first_name || !last_name || !email || !password) {
+  if (!firstName || !lastName || !email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -14,7 +14,7 @@ const register = async (req, res) => {
 
     const result = await pool.query(
       "INSERT INTO users (first_name, last_name, email, password) VALUES($1, $2, $3, $4) RETURNING *",
-      [first_name, last_name, email, hashedPassword]
+      [firstName, lastName, email, hashedPassword]
     );
     console.log(result.rows);
 
