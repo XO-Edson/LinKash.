@@ -40,6 +40,9 @@ export type AuthContextType = {
   setBio: (e: any) => void;
   handleBio: (e: any, cb: () => void) => void;
   isNewUser: boolean;
+  shortcode: number | null;
+  setShortcode: (e: any) => void;
+  handleAccount: (e: any, cb: () => void) => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -57,6 +60,7 @@ const AuthProvider = ({ children }: ProviderProps) => {
     description: "",
   });
   const [isNewUser, setIsNewUser] = useState(false);
+  const [shortcode, setShortcode] = useState<number | null>(null);
 
   const handleBio = async (bio: BioData, callBack: () => void) => {
     const { username, description } = bio;
@@ -155,6 +159,31 @@ const AuthProvider = ({ children }: ProviderProps) => {
     }
   };
 
+  const handleAccount = async (account: number, callBack: () => void) => {
+    const reqBody = account;
+    if (!reqBody) throw Error("Account missing");
+
+    try {
+      const response = await fetch("http://localhost:4700/accountDetails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ reqBody }),
+      });
+
+      if (!response.ok) throw new Error("Error setting account");
+      const data = await response.json();
+      console.log(data);
+
+      setShortcode(data);
+      callBack();
+    } catch (error) {
+      console.error("Account set-up failed", error);
+    }
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -180,6 +209,9 @@ const AuthProvider = ({ children }: ProviderProps) => {
         setBio,
         handleBio,
         isNewUser,
+        shortcode,
+        setShortcode,
+        handleAccount,
       }}
     >
       {children}

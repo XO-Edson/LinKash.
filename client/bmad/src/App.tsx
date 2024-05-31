@@ -5,6 +5,7 @@ import RegisterUser from "./pages/RegisterUser";
 import Bio from "./pages/Bio";
 import Main from "./pages/Main";
 import Cookies from "js-cookie";
+import AccountInfo from "./pages/AccountInfo";
 
 function App() {
   const token = Cookies.get("token");
@@ -17,6 +18,7 @@ function App() {
         <Route path="/logIn" element={<Login />} />
         <Route path="/bio" element={token ? <Bio /> : <Login />} />
         <Route path="/main" element={token ? <Main /> : <Login />} />
+        <Route path="/account" element={token ? <AccountInfo /> : <Login />} />
       </Routes>
     </main>
   );

@@ -14,7 +14,7 @@ function Bio() {
   };
 
   if (addBio) {
-    return <Navigate to="/main" />;
+    return <Navigate to="/account" />;
   }
 
   const checkUsername = async (username: string | undefined) => {
