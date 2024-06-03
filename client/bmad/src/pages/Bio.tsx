@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 
 function Bio() {
   const { handleBio, bio, setBio, isNewUser, token } = useAuthContext();
-
   const [addBio, setAddBio] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -12,10 +11,6 @@ function Bio() {
   const registerPage = () => {
     handleBio(bio, () => setAddBio(true));
   };
-
-  if (addBio) {
-    return <Navigate to="/account" />;
-  }
 
   const checkUsername = async (username: string | undefined) => {
     if (!username) return;
@@ -37,21 +32,35 @@ function Bio() {
 
       if (response.status === 400) {
         setError(data.message || "Username already exists.");
+        setSuccess("");
       } else if (response.status === 200) {
         setSuccess("Username available");
+        setError("");
       } else {
         setError("Error checking username.");
+        setSuccess("");
       }
     } catch (error) {
       console.log(error);
+      setError("Error checking username.");
+      setSuccess("");
     }
   };
 
   useEffect(() => {
-    checkUsername(bio?.username);
+    if (bio?.username) {
+      checkUsername(bio.username);
+    } else {
+      setError("");
+      setSuccess("");
+    }
   }, [bio?.username]);
 
   console.log(isNewUser);
+
+  if (addBio) {
+    return <Navigate to="/account" />;
+  }
 
   return (
     <>
@@ -59,14 +68,14 @@ function Bio() {
         <section>
           <nav className="fixed flex justify-between items-center p-2 md:p-4 shadow-sm w-full">
             <div>
-              <h2 className=" font-bold">
+              <h2 className="font-bold">
                 <Link to={"/"}> BMAD</Link>
               </h2>
             </div>
 
             <div>
               Already have an account?{" "}
-              <Link to={"/logIn"} className=" underline">
+              <Link to={"/logIn"} className="underline">
                 Log in
               </Link>
             </div>
@@ -74,7 +83,7 @@ function Bio() {
 
           <article className="grid place-content-center h-screen">
             <h2 className="font-bold text-4xl mb-2">Create your account bio</h2>
-            <p className=" mb-5">
+            <p className="mb-5">
               Choose a username and description for your page.
             </p>
 
@@ -87,16 +96,20 @@ function Bio() {
                 className="rounded-md p-3 pl-[18.5ch] border-none outline-none flex-1 placeholder:text-[#BBB] w-full"
                 placeholder="username"
                 value={bio?.username || ""}
-                onChange={(e) => setBio({ ...bio, username: e.target.value })}
+                onChange={(e) => {
+                  setBio({ ...bio, username: e.target.value });
+                  setError("");
+                  setSuccess("");
+                }}
               />
             </div>
-            {error && <p className=" text-red-500">{error}</p>}
+            {error && <p className="text-red-500">{error}</p>}
             {success && <p className="text-green-500">{success}</p>}
 
             <textarea
               className="rounded-md p-2 border-none outline-none placeholder:text-[#BBB]"
               placeholder="Description"
-              value={bio?.description}
+              value={bio?.description || ""}
               onChange={(e) => setBio({ ...bio, description: e.target.value })}
             />
           </article>
@@ -110,7 +123,7 @@ function Bio() {
           </footer>
         </section>
       ) : (
-        <Navigate to="/main" />
+        <Navigate to="/account" />
       )}
     </>
   );

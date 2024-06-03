@@ -7,8 +7,8 @@ type ProviderProps = {
 
 type UserInfo = {
   email: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
 };
 
 type BioData = {
@@ -80,9 +80,8 @@ const AuthProvider = ({ children }: ProviderProps) => {
 
       const data = await response.json();
       setBio(data);
-      console.log("Bio added");
 
-      console.log(data);
+      console.log("Bio added");
       callBack();
     } catch (error) {
       console.error(error, "Username failed");
@@ -145,9 +144,11 @@ const AuthProvider = ({ children }: ProviderProps) => {
       Cookies.set("token", token);
 
       /* SESSION STORAGE TO CHECK FOR NEW USER */
-      const isNewUser = sessionStorage.getItem("isNewUser") === "true";
+      const newUser = sessionStorage.getItem("isNewUser") === "true";
+
+      setIsNewUser(newUser);
+
       if (isNewUser) {
-        setIsNewUser(true);
         sessionStorage.removeItem("isNewUser");
       }
 
@@ -160,17 +161,18 @@ const AuthProvider = ({ children }: ProviderProps) => {
   };
 
   const handleAccount = async (account: number, callBack: () => void) => {
-    const reqBody = account;
-    if (!reqBody) throw Error("Account missing");
+    const shortcode = account;
+
+    if (!shortcode) throw Error("Account missing");
 
     try {
       const response = await fetch("http://localhost:4700/accountDetails", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
+          authorization: `Bearer ${Cookies.get("token")}`,
         },
-        body: JSON.stringify({ reqBody }),
+        body: JSON.stringify({ shortcode }),
       });
 
       if (!response.ok) throw new Error("Error setting account");

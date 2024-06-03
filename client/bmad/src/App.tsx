@@ -17,8 +17,8 @@ function App() {
         <Route path="/signUp" element={<RegisterUser />} />
         <Route path="/logIn" element={<Login />} />
         <Route path="/bio" element={token ? <Bio /> : <Login />} />
-        <Route path="/main" element={token ? <Main /> : <Login />} />
         <Route path="/account" element={token ? <AccountInfo /> : <Login />} />
+        <Route path="/main" element={<Main />} />
       </Routes>
     </main>
   );

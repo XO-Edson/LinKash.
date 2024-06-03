@@ -1,19 +1,30 @@
-import { Link, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Login() {
-  const { email, setEmail, password, setPassword, login } = useAuthContext();
+  const { email, setEmail, password, setPassword, login, isNewUser } =
+    useAuthContext();
 
   const [isLogin, setIsLogin] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = () => {
     login(email, password, () => setIsLogin(true));
   };
 
-  if (isLogin) {
-    return <Navigate to="/bio" />;
-  }
+  useEffect(() => {
+    console.log(isLogin);
+    console.log(isNewUser);
+
+    if (isLogin) {
+      if (!isNewUser) {
+        return navigate("/main");
+      } else {
+        return navigate("/bio");
+      }
+    }
+  }, [isLogin]);
 
   return (
     <section>
