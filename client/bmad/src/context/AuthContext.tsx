@@ -43,6 +43,8 @@ export type AuthContextType = {
   shortcode: number | null;
   setShortcode: (e: any) => void;
   handleAccount: (e: any, cb: () => void) => void;
+  menu: boolean;
+  toggleMenu: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -61,6 +63,11 @@ const AuthProvider = ({ children }: ProviderProps) => {
   });
   const [isNewUser, setIsNewUser] = useState(false);
   const [shortcode, setShortcode] = useState<number | null>(null);
+  const [menu, setMenu] = useState(false);
+
+  const toggleMenu = () => {
+    setMenu((prev) => !prev);
+  };
 
   const handleBio = async (bio: BioData, callBack: () => void) => {
     const { username, description } = bio;
@@ -215,6 +222,8 @@ const AuthProvider = ({ children }: ProviderProps) => {
         shortcode,
         setShortcode,
         handleAccount,
+        menu,
+        toggleMenu,
       }}
     >
       {children}

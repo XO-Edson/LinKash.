@@ -1,21 +1,24 @@
 import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 
 function AccountInfo() {
   const [account, setAccount] = useState(false);
   const { shortcode, setShortcode, handleAccount, isNewUser, token } =
     useAuthContext();
+  const navigate = useNavigate();
 
   const submitAccount = () => {
     handleAccount(shortcode, () => setAccount(true));
   };
 
-  console.log(account);
-
   if (account) {
     return <Navigate to="/main" />;
   }
+
+  const skip = () => {
+    navigate("/main");
+  };
 
   return (
     <>
@@ -46,14 +49,22 @@ function AccountInfo() {
               value={shortcode || ""}
               onChange={(e) => setShortcode(e.target.value)}
             />
+            <div className=" text-right">
+              <button
+                className="px-6 py-2 rounded-3xl bg-skyBlue font-bold text-slate-300 scale m-2"
+                onClick={submitAccount}
+              >
+                Done!
+              </button>
+            </div>
           </article>
 
           <footer className="absolute bottom-0 shadow-top w-full text-right">
             <button
-              className="p-4 rounded-3xl bg-skyBlue font-bold text-slate-300 scale m-2"
-              onClick={submitAccount}
+              onClick={skip}
+              className="py-2 px-6 rounded-3xl bg-customGray font-bold text-black scale m-2"
             >
-              Done!
+              Skip
             </button>
           </footer>
         </section>
