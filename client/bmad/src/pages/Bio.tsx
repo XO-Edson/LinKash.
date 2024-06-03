@@ -64,7 +64,7 @@ function Bio() {
 
   return (
     <>
-      {isNewUser ? (
+      {isNewUser && token ? (
         <section>
           <nav className="fixed flex justify-between items-center p-2 md:p-4 shadow-sm w-full">
             <div>

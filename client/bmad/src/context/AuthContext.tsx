@@ -148,7 +148,7 @@ const AuthProvider = ({ children }: ProviderProps) => {
 
       setIsNewUser(newUser);
 
-      if (isNewUser) {
+      if (newUser) {
         sessionStorage.removeItem("isNewUser");
       }
 
@@ -180,6 +180,7 @@ const AuthProvider = ({ children }: ProviderProps) => {
       console.log(data);
 
       setShortcode(data);
+      setIsNewUser(false);
       callBack();
     } catch (error) {
       console.error("Account set-up failed", error);

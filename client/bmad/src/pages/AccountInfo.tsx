@@ -4,7 +4,7 @@ import { useAuthContext } from "../context/AuthContext";
 
 function AccountInfo() {
   const [account, setAccount] = useState(false);
-  const { shortcode, setShortcode, handleAccount, isNewUser } =
+  const { shortcode, setShortcode, handleAccount, isNewUser, token } =
     useAuthContext();
 
   const submitAccount = () => {
@@ -19,7 +19,7 @@ function AccountInfo() {
 
   return (
     <>
-      {isNewUser ? (
+      {isNewUser && token ? (
         <section>
           <nav className="fixed flex justify-between items-center p-2 md:p-4 shadow-sm w-full">
             <div>

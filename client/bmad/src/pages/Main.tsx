@@ -1,8 +1,13 @@
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
+import Cookies from "js-cookie";
 
 function Main() {
-  const { user, logout, token } = useAuthContext();
+  const { user, logout } = useAuthContext();
+  const token = Cookies.get("token");
+
+  console.log(token);
+
   const navigate = useNavigate();
 
   const logoutBtn = () => {
