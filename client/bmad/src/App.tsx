@@ -5,6 +5,7 @@ import RegisterUser from "./pages/RegisterUser";
 import Bio from "./pages/Bio";
 import Main from "./pages/Main";
 import AccountInfo from "./pages/AccountInfo";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/bio" element={<Bio />} />
         <Route path="/account" element={<AccountInfo />} />
         <Route path="/main" element={<Main />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </main>
   );

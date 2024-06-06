@@ -1,57 +1,21 @@
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 import Cookies from "js-cookie";
-import { RiMenu3Fill } from "react-icons/ri";
 import { CiHeart } from "react-icons/ci";
 import pImg from "../assets/Lemon1.jpg";
+import NavbarAlt from "../components/NavbarAlt";
 
 function Main() {
-  const { user, logout, menu, toggleMenu } = useAuthContext();
+  const { user } = useAuthContext();
   const token = Cookies.get("token");
 
   console.log(token);
-
-  const navigate = useNavigate();
-
-  const logoutBtn = () => {
-    navigate("/");
-    logout();
-  };
 
   return (
     <>
       {token ? (
         <section>
-          <nav className="sticky flex justify-between items-center p-2 md:p-4 shadow-sm w-full bg-darkBlue text-white">
-            <div>
-              <h2 className="font-bold">
-                <Link to={"/"}> BMAD</Link>
-              </h2>
-            </div>
-
-            <div className="relative md:hidden font-bold">
-              <RiMenu3Fill className="text-3xl" onClick={toggleMenu} />
-
-              {menu && (
-                <div className="flex flex-col p-2 bg-darkBlue text-white rounded-md absolute right-2 top-10 w-[200px] md:w-[250px] z-10 space-y-4 items-start">
-                  <p>Dashboard</p>
-                  <p>Profile</p>
-                  <p onClick={logoutBtn}>Logout</p>
-                </div>
-              )}
-            </div>
-
-            <div className="space-x-3 font-bold px-2 hidden md:flex">
-              <p className=" hover:text-gray-600 cursor-pointer">Dashboard</p>
-              <p className=" hover:text-gray-600 cursor-pointer">Profile</p>
-              <p
-                className=" hover:text-gray-600 cursor-pointer"
-                onClick={logoutBtn}
-              >
-                Logout
-              </p>
-            </div>
-          </nav>
+          <NavbarAlt />
 
           <article className="flex flex-col justify-center w-[90%] md:w-[50%] mx-auto bg-white rounded-md p-3 my-[20px]">
             <div className="flex justify-between shadow-sm my-4">
