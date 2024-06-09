@@ -44,4 +44,24 @@ const checkUsername = async (req, res) => {
   }
 };
 
-export { addUserBio, checkUsername };
+const updateBio = async (req, res) => {
+  const { firstName, lastName, email } = req.body;
+  const { userId } = req.userId;
+
+  console.log(firstName, lastName, email);
+  if (!firstName || !lastName || !email)
+    return res.status(400).json({ message: "Name and email required" });
+
+  try {
+    const updatePersonalInfo = await pool.query(
+      `UPDATE users SET first_name = $1, last_name = $2, email = $3 WHERE id = $4`,
+      [firstName, lastName, email, userId]
+    );
+
+    res.status(201).json({ message: "Bio updated!" });
+  } catch (error) {
+    console.error(error, "error updating bio");
+  }
+};
+
+export { addUserBio, checkUsername, updateBio };

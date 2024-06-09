@@ -22,7 +22,6 @@ app.use("/login", loginRoute);
 
 /* ROUTES */
 app.use("/addBio", verifyToken, userBio);
-app.use("/addBio/check-username", verifyToken, userBio);
 app.use("/accountDetails", verifyToken, accountsRoute);
 app.use("/stkpush", verifyToken, access, stkPush);
 app.use("/stkCallback", verifyToken, saveTransactionRoute);
