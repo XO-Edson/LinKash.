@@ -15,14 +15,14 @@ function Navbar() {
   };
 
   return (
-    <nav className="flex justify-between items-center p-2 md:p-4 font-bold shadow-sm bg-[#031930]">
+    <nav className="flex justify-between items-center p-2 md:p-4 font-bold shadow-sm bg-darkBlue text-white">
       <div className="space-x-2 hidden md:flex md:items-center">
         <p>FAQ</p>
         <p>Resources</p>
       </div>
       <div>
         <h2>
-          <Link to={"/"}> BMAD</Link>
+          <Link to={"/"}>LIN-KSH</Link>
         </h2>
       </div>
       <div className="space-x-2 hidden md:flex">

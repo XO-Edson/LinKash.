@@ -16,6 +16,12 @@ function NavbarAlt() {
     navigate("/profile");
   };
 
+  const dashboard = () => {
+    console.log("clickd");
+
+    navigate("/main");
+  };
+
   return (
     <nav className="sticky flex justify-between items-center p-2 md:p-4 shadow-sm w-full bg-darkBlue text-white">
       <div>
@@ -29,7 +35,7 @@ function NavbarAlt() {
 
         {menu && (
           <div className="flex flex-col p-2 bg-darkBlue text-white rounded-md absolute right-2 top-10 w-[200px] md:w-[250px] z-10 space-y-4 items-start">
-            <p>Dashboard</p>
+            <p onClick={dashboard}>Dashboard</p>
             <p onClick={profile}>Profile</p>
             <p onClick={logoutBtn}>Logout</p>
           </div>
@@ -37,7 +43,9 @@ function NavbarAlt() {
       </div>
 
       <div className="space-x-3 font-bold px-2 hidden md:flex">
-        <p className=" hover:text-gray-600 cursor-pointer">Dashboard</p>
+        <p className=" hover:text-gray-600 cursor-pointer" onClick={dashboard}>
+          Dashboard
+        </p>
         <p className=" hover:text-gray-600 cursor-pointer" onClick={profile}>
           Profile
         </p>

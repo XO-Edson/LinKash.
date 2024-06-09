@@ -11,7 +11,7 @@ function About() {
 
         <p>
           BMAD makes supporting simple and enjoyable. In just a few taps, your
-          fans can make a payment (buy you a doughnut) and leave a message.
+          fans can make a payment and leave a message.
         </p>
       </div>
 
