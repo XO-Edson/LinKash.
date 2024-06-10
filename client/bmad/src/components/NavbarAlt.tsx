@@ -3,30 +3,31 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 
 function NavbarAlt() {
-  const { logout, toggleMenu, menu } = useAuthContext();
+  const { logout, toggleMenu, menu, setMenu } = useAuthContext();
 
   const navigate = useNavigate();
 
   const logoutBtn = () => {
     navigate("/");
+    setMenu(false);
     logout();
   };
 
   const profile = () => {
     navigate("/profile");
+    setMenu(false);
   };
 
   const dashboard = () => {
-    console.log("clickd");
-
     navigate("/main");
+    setMenu(false);
   };
 
   return (
     <nav className="sticky flex justify-between items-center p-2 md:p-4 shadow-sm w-full bg-darkBlue text-white">
       <div>
         <h2 className="font-bold">
-          <Link to={"/"}> LIN-KSH</Link>
+          <Link to={"/main"}> LIN-KSH</Link>
         </h2>
       </div>
 

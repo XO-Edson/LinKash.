@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NavbarAlt from "../components/NavbarAlt";
 import { useAuthContext } from "../context/AuthContext";
 import { Formik, Form, Field } from "formik";
@@ -16,14 +16,25 @@ const initialValues = {
 };
 
 function Profile() {
-  const { user } = useAuthContext();
+  const { user, loading } = useAuthContext();
+
   const [newName, setNewName] = useState({
-    firstName: user?.first_name,
-    lastName: user?.last_name,
+    firstName: user?.first_name || "",
+    lastName: user?.last_name || "",
   });
-  const [email, setEmail] = useState(user?.email);
+  const [email, setEmail] = useState(user?.email || "");
 
   console.log(newName, email);
+
+  useEffect(() => {
+    if (user) {
+      setNewName({
+        firstName: user.first_name,
+        lastName: user.last_name,
+      });
+      setEmail(user.email || "");
+    }
+  }, [user]);
 
   const handleInputChange = (e: any) => {
     const fullName = e.target.value;
@@ -63,10 +74,13 @@ function Profile() {
     console.log(value);
   };
 
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <section>
       <NavbarAlt />
-
       {/* PERSONAL INFO CHANGES */}
       <article className="flex flex-col justify-center w-[90%] md:w-[50%] mx-auto rounded-md p-4">
         <h2 className=" text-2xl">Personal Info</h2>
@@ -94,8 +108,7 @@ function Profile() {
           Save changes
         </button>
       </article>
-
-      {/* PASSWORD CHANGES */}
+      -{/* PASSWORD CHANGES */}
       <article className="flex flex-col justify-center w-[90%] md:w-[50%] mx-auto rounded-md p-4 mt-4">
         <h2 className="text-2xl">Change password</h2>
         <Formik
@@ -143,7 +156,6 @@ function Profile() {
           )}
         </Formik>
       </article>
-
       <article className="flex flex-col md:flex-row md:justify-between w-[90%] md:w-[50%] mx-auto rounded-md p-4 bg-white mt-4 absolute bottom-5 left-1/2 -translate-x-1/2">
         <div className=" md:w-1/2">
           <h2 className=" text-2xl text-red-400">Delete account</h2>

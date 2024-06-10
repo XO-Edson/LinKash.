@@ -3,15 +3,17 @@ import { RiMenu3Fill } from "react-icons/ri";
 import { useAuthContext } from "../context/AuthContext";
 
 function Navbar() {
-  const { menu, toggleMenu } = useAuthContext();
+  const { menu, toggleMenu, setMenu } = useAuthContext();
   const navigate = useNavigate();
 
   const signUpPage = () => {
     navigate("/signUp");
+    setMenu(false);
   };
 
   const loginPage = () => {
     navigate("/login");
+    setMenu(false);
   };
 
   return (

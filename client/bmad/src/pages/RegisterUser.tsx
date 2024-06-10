@@ -38,7 +38,7 @@ function RegisterUser() {
       <nav className="fixed flex justify-between items-center p-2 md:p-4 shadow-sm w-full">
         <div>
           <h2 className=" font-bold">
-            <Link to={"/"}> BMAD</Link>
+            <Link to={"/"}> LIN-KSH</Link>
           </h2>
         </div>
 

@@ -1,4 +1,10 @@
-import { ReactNode, createContext, useState, useContext } from "react";
+import {
+  ReactNode,
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+} from "react";
 import Cookies from "js-cookie";
 
 type ProviderProps = {
@@ -44,7 +50,9 @@ export type AuthContextType = {
   setShortcode: (e: any) => void;
   handleAccount: (e: any, cb: () => void) => void;
   menu: boolean;
+  setMenu: (e: any) => void;
   toggleMenu: () => void;
+  loading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -64,6 +72,19 @@ const AuthProvider = ({ children }: ProviderProps) => {
   const [isNewUser, setIsNewUser] = useState(false);
   const [shortcode, setShortcode] = useState<number | null>(null);
   const [menu, setMenu] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    // Check if storedUser is not null before parsing
+    if (storedUser) {
+      // Parse the stored JSON string back into an object and cast it to UserInfo
+      const parsedUser: UserInfo = JSON.parse(storedUser);
+      setUser(parsedUser);
+    }
+    setLoading(false);
+  }, []);
 
   const toggleMenu = () => {
     setMenu((prev) => !prev);
@@ -145,6 +166,8 @@ const AuthProvider = ({ children }: ProviderProps) => {
 
       const { token, user: userData } = data;
 
+      localStorage.setItem("user", JSON.stringify(userData));
+
       setUser(userData);
       setToken(token);
 
@@ -197,6 +220,7 @@ const AuthProvider = ({ children }: ProviderProps) => {
   const logout = () => {
     setUser(null);
     setToken(null);
+    localStorage.clear();
     Cookies.remove("token");
     console.log("Logged out");
   };
@@ -224,6 +248,8 @@ const AuthProvider = ({ children }: ProviderProps) => {
         handleAccount,
         menu,
         toggleMenu,
+        loading,
+        setMenu,
       }}
     >
       {children}
