@@ -64,4 +64,24 @@ const updateBio = async (req, res) => {
   }
 };
 
-export { addUserBio, checkUsername, updateBio };
+const deleteUser = async (req, res) => {
+  const { userId } = req.userId;
+
+  console.log(userId);
+
+  try {
+    const result = await pool.query("DELETE FROM users WHERE id=$1", [userId]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    console.log(result.rows);
+
+    res.status(200).json({ message: "Account deleted successfully" });
+  } catch (error) {
+    console.error(error, "error deleting account");
+  }
+};
+
+export { addUserBio, checkUsername, updateBio, deleteUser };
