@@ -56,8 +56,6 @@ function Bio() {
     }
   }, [bio?.username]);
 
-  console.log(isNewUser);
-
   if (addBio) {
     return <Navigate to="/account" />;
   }

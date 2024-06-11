@@ -4,6 +4,7 @@ import { useAuthContext } from "../context/AuthContext";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 type PassWordType = {
   password: string;
@@ -18,13 +19,13 @@ const initialValues = {
 function Profile() {
   const { user, loading } = useAuthContext();
 
+  const navigate = useNavigate();
+
   const [newName, setNewName] = useState({
     firstName: user?.first_name || "",
     lastName: user?.last_name || "",
   });
   const [email, setEmail] = useState(user?.email || "");
-
-  console.log(newName, email);
 
   useEffect(() => {
     if (user) {
@@ -68,6 +69,22 @@ function Profile() {
 
     const data = await response.json();
     console.log(data);
+  };
+
+  const deleteAccount = async () => {
+    const response = await fetch("http://localhost:4700/addBio/deleteAccount", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Error deleting account");
+
+    const data = await response.json();
+    console.log(data);
+    navigate("/login");
   };
 
   const handlePasswordChange = (value: PassWordType) => {
@@ -165,7 +182,10 @@ function Profile() {
           </p>
         </div>
         <div>
-          <button className="p-3 rounded-3xl bg-red-500 font-bold mt-4 text-slate-200 scale">
+          <button
+            className="p-3 rounded-3xl bg-red-500 font-bold mt-4 text-slate-200 scale"
+            onClick={deleteAccount}
+          >
             Delete my account
           </button>
         </div>

@@ -6,10 +6,10 @@ import pImg from "../assets/Lemon1.jpg";
 import NavbarAlt from "../components/NavbarAlt";
 
 function Main() {
-  const { user } = useAuthContext();
+  const { user, bio } = useAuthContext();
   const token = Cookies.get("token");
 
-  console.log(token);
+  console.log(bio);
 
   return (
     <>

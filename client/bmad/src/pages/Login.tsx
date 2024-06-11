@@ -14,9 +14,6 @@ function Login() {
   };
 
   useEffect(() => {
-    console.log(isLogin);
-    console.log(isNewUser);
-
     if (isLogin) {
       if (!isNewUser) {
         return navigate("/main");
