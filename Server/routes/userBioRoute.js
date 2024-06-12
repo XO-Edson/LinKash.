@@ -4,11 +4,14 @@ import {
   addUserBio,
   updateBio,
   deleteUser,
+  getBio,
 } from "../controllers/userBio.js";
 
 const router = Router();
 
 router.post("/", addUserBio);
+
+router.get("/getBio", getBio);
 
 router.post("/check-username", checkUsername);
 

@@ -21,6 +21,22 @@ const addUserBio = async (req, res) => {
   }
 };
 
+const getBio = async (req, res) => {
+  const { userId } = req.userId;
+
+  try {
+    const result = await pool.query(
+      "SELECT * FROM user_bio WHERE user_id = $1",
+      [userId]
+    );
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Error fetching bio" });
+  }
+};
+
 const checkUsername = async (req, res) => {
   const { username } = req.body;
 
@@ -84,4 +100,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { addUserBio, checkUsername, updateBio, deleteUser };
+export { addUserBio, checkUsername, updateBio, deleteUser, getBio };
