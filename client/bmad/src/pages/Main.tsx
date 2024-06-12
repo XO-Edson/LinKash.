@@ -4,12 +4,56 @@ import Cookies from "js-cookie";
 import { CiHeart } from "react-icons/ci";
 import pImg from "../assets/Lemon1.jpg";
 import NavbarAlt from "../components/NavbarAlt";
+import { useEffect, useState } from "react";
+
+type BioType = {
+  user_id: number;
+  username: string;
+  description: string;
+};
 
 function Main() {
-  const { user, bio } = useAuthContext();
+  const { user } = useAuthContext();
+  const [copySuccess, setCopySuccess] = useState("");
+  const [sharePopup, setSharePopup] = useState(false);
+  const [bio, setBio] = useState<BioType | null>(null);
+  const [text, setText] = useState("");
+
   const token = Cookies.get("token");
 
-  console.log(bio);
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopySuccess("Copied!");
+    } catch (error) {
+      setCopySuccess("Failed to copy!");
+    }
+  };
+
+  const getBio = async () => {
+    const response = await fetch("http://localhost:4700/addBio/getBio", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Error fetching Bio");
+
+    const data = await response.json();
+    setBio(data);
+  };
+
+  useEffect(() => {
+    getBio();
+  }, []);
+
+  useEffect(() => {
+    if (bio?.username) {
+      setText(`domain.com/${bio.username}`);
+    }
+  }, [bio]);
 
   return (
     <>
@@ -28,14 +72,44 @@ function Main() {
                   <h1 className="font-bold">
                     Hi, {`${user?.first_name} ${user?.last_name}`}
                   </h1>
-                  <p>domain.com/username </p>
+                  <p>domain.com/{`${bio?.username}`}</p>
                 </div>
               </div>
 
-              <button className="p-3 md:py-2 md:px-6 rounded-3xl bg-skyBlue font-bold text-white m-2 active:bg-sky-700">
+              <button
+                className="p-3 md:py-2 md:px-6 rounded-3xl bg-skyBlue font-bold text-white m-2 active:bg-sky-700"
+                onClick={() => setSharePopup((prev) => !prev)}
+              >
                 Share
               </button>
             </div>
+
+            {/* LINK POPUP */}
+            {sharePopup && (
+              <div
+                className="absolute top-0 left-0 w-screen h-screen bg-black/50"
+                onClick={() => setSharePopup((prev) => !prev)}
+              >
+                <div
+                  className="bg-white px-4 py-6 rounded-md absolute top-[50%] left-[25%]"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <input
+                    type="text"
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    className="rounded-md p-2 border border-black outline-none placeholder:text-[#BBB]"
+                  />
+                  <button
+                    onClick={copyToClipboard}
+                    className="px-6 py-2 rounded-3xl bg-skyBlue font-bold text-slate-300 scale m-2"
+                  >
+                    Copy Text
+                  </button>
+                  <p> {copySuccess && <span>{copySuccess}</span>}</p>
+                </div>
+              </div>
+            )}
 
             <div>
               <h1 className=" font-bold">Earnings</h1>
