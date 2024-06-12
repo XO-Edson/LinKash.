@@ -9,7 +9,15 @@ const register = async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
+  const existingEmail = await pool.query(
+    "SELECT * FROM users WHERE email = $1",
+    [email]
+  );
+
   try {
+    if (existingEmail.rows.length > 0)
+      return res.status(400).json({ message: "User already exists" });
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
