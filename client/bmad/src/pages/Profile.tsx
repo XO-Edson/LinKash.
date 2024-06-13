@@ -1,15 +1,8 @@
-import { useEffect, useState } from "react";
 import NavbarAlt from "../components/NavbarAlt";
 import { useAuthContext } from "../context/AuthContext";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
-
-type PassWordType = {
-  password: string;
-  confirmPassword: string;
-};
+import { useProfileContext } from "../context/ProfileContext";
 
 const initialValues = {
   password: "",
@@ -17,25 +10,16 @@ const initialValues = {
 };
 
 function Profile() {
-  const { user, loading } = useAuthContext();
-
-  const navigate = useNavigate();
-
-  const [newName, setNewName] = useState({
-    firstName: user?.first_name || "",
-    lastName: user?.last_name || "",
-  });
-  const [email, setEmail] = useState(user?.email || "");
-
-  useEffect(() => {
-    if (user) {
-      setNewName({
-        firstName: user.first_name,
-        lastName: user.last_name,
-      });
-      setEmail(user.email || "");
-    }
-  }, [user]);
+  const { loading } = useAuthContext();
+  const {
+    setNewName,
+    newName,
+    email,
+    handleBioChanges,
+    deleteAccount,
+    setEmail,
+    handlePasswordChange,
+  } = useProfileContext();
 
   const handleInputChange = (e: any) => {
     const fullName = e.target.value;
@@ -50,46 +34,6 @@ function Profile() {
       .oneOf([Yup.ref("password")], "Password not matching")
       .required(),
   });
-
-  const handleBioChanges = async () => {
-    const response = await fetch("http://localhost:4700/addBio/updateBio", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${Cookies.get("token")}`,
-      },
-      body: JSON.stringify({
-        firstName: newName.firstName,
-        lastName: newName.lastName,
-        email,
-      }),
-    });
-
-    if (!response.ok) throw new Error("Error setting account");
-
-    const data = await response.json();
-    console.log(data);
-  };
-
-  const deleteAccount = async () => {
-    const response = await fetch("http://localhost:4700/addBio/deleteAccount", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${Cookies.get("token")}`,
-      },
-    });
-
-    if (!response.ok) throw new Error("Error deleting account");
-
-    const data = await response.json();
-    console.log(data);
-    navigate("/login");
-  };
-
-  const handlePasswordChange = (value: PassWordType) => {
-    console.log(value);
-  };
 
   if (loading) {
     return <p>Loading...</p>;

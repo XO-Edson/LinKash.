@@ -5,18 +5,13 @@ import { CiHeart } from "react-icons/ci";
 import pImg from "../assets/Lemon1.jpg";
 import NavbarAlt from "../components/NavbarAlt";
 import { useEffect, useState } from "react";
-
-type BioType = {
-  user_id: number;
-  username: string;
-  description: string;
-};
+import { useProfileContext } from "../context/ProfileContext";
 
 function Main() {
   const { user } = useAuthContext();
   const [copySuccess, setCopySuccess] = useState("");
   const [sharePopup, setSharePopup] = useState(false);
-  const [bio, setBio] = useState<BioType | null>(null);
+  const { bio } = useProfileContext();
   const [text, setText] = useState("");
 
   const token = Cookies.get("token");
@@ -29,25 +24,6 @@ function Main() {
       setCopySuccess("Failed to copy!");
     }
   };
-
-  const getBio = async () => {
-    const response = await fetch("http://localhost:4700/addBio/getBio", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) throw new Error("Error fetching Bio");
-
-    const data = await response.json();
-    setBio(data);
-  };
-
-  useEffect(() => {
-    getBio();
-  }, []);
 
   useEffect(() => {
     if (bio?.username) {
