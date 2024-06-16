@@ -75,6 +75,7 @@ function Main() {
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     className="rounded-md p-2 border border-black outline-none placeholder:text-[#BBB]"
+                    disabled
                   />
                   <button
                     onClick={copyToClipboard}

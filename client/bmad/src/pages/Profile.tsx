@@ -3,6 +3,8 @@ import { useAuthContext } from "../context/AuthContext";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { useProfileContext } from "../context/ProfileContext";
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
 
 const initialValues = {
   password: "",
@@ -10,6 +12,7 @@ const initialValues = {
 };
 
 function Profile() {
+  const [accountDelete, setAccountDelete] = useState(false);
   const { loading } = useAuthContext();
   const {
     setNewName,
@@ -20,6 +23,10 @@ function Profile() {
     setEmail,
     handlePasswordChange,
   } = useProfileContext();
+
+  const handleAccountDelete = () => {
+    deleteAccount(() => setAccountDelete(true));
+  };
 
   const handleInputChange = (e: any) => {
     const fullName = e.target.value;
@@ -37,6 +44,10 @@ function Profile() {
 
   if (loading) {
     return <p>Loading...</p>;
+  }
+
+  if (accountDelete) {
+    <Navigate to="/login" />;
   }
 
   return (
@@ -128,7 +139,7 @@ function Profile() {
         <div>
           <button
             className="p-3 rounded-3xl bg-red-500 font-bold mt-4 text-slate-200 scale"
-            onClick={deleteAccount}
+            onClick={handleAccountDelete}
           >
             Delete my account
           </button>

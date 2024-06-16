@@ -7,7 +7,7 @@ import {
 } from "react";
 import { useAuthContext } from "./AuthContext";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 
 type ProviderProps = {
   children: ReactNode;
@@ -36,17 +36,18 @@ type ProfileContextType = {
   newName: NewName;
   setNewName: (e: any) => void;
   handleBioChanges: () => void;
-  deleteAccount: () => void;
+  deleteAccount: (cb: () => void) => void;
   handlePasswordChange: (e: PassWordType) => void;
 };
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 const ProfileProvider = ({ children }: ProviderProps) => {
-  const { token, user } = useAuthContext();
+  const { user } = useAuthContext();
   const [bio, setBio] = useState<BioType | null>(null);
-
+  const token = Cookies.get("token");
   //const navigate = useNavigate();
+  console.log(token);
 
   const [newName, setNewName] = useState({
     firstName: user?.first_name || "",
@@ -107,7 +108,7 @@ const ProfileProvider = ({ children }: ProviderProps) => {
     console.log(data);
   };
 
-  const deleteAccount = async () => {
+  const deleteAccount = async (callback: () => void) => {
     const response = await fetch("http://localhost:4700/addBio/deleteAccount", {
       method: "DELETE",
       headers: {
@@ -120,6 +121,7 @@ const ProfileProvider = ({ children }: ProviderProps) => {
 
     const data = await response.json();
     console.log(data);
+    callback();
     //navigate("/login");
   };
 
