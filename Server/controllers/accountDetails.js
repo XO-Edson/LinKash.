@@ -1,3 +1,4 @@
+import { json } from "express";
 import pool from "../config/db.js";
 
 const accountInfo = async (req, res) => {
@@ -35,4 +36,30 @@ const accountInfo = async (req, res) => {
   }
 };
 
-export default accountInfo;
+const accountProfile = async (req, res) => {
+  const { username } = req.params;
+
+  const checkUsername = await pool.query(
+    "SELECT * FROM user_bio WHERE username = $1",
+    [username]
+  );
+
+  if (checkUsername.rows.length === 0) {
+    res.status(400).json({ message: "Username missing" });
+  }
+
+  try {
+    const userId = checkUsername.rows[0].user_id;
+
+    const userData = await pool.query("SELECT * FROM users WHERE id = $1", [
+      userId,
+    ]);
+
+    res.status(200).json(userData.rows[0]);
+  } catch (error) {
+    console.error(error.message);
+    return res.status(400).json({ message: "Error getting user page" });
+  }
+};
+
+export { accountInfo, accountProfile };

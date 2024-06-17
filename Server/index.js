@@ -8,6 +8,7 @@ import userBio from "./routes/userBioRoute.js";
 import accountsRoute from "./routes/accountDetailsRoute.js";
 import { access, stkPush } from "./controllers/mpesaStk.js";
 import saveTransactionRoute from "./routes/saveTransactionRoute.js";
+import { accountProfile } from "./controllers/accountDetails.js";
 
 dotenv.config();
 const app = express();
@@ -23,7 +24,10 @@ app.use("/login", loginRoute);
 /* ROUTES */
 app.use("/addBio", verifyToken, userBio);
 app.use("/accountDetails", verifyToken, accountsRoute);
-app.use("/stkpush", verifyToken, access, stkPush);
+app.use("/stkpush", access, stkPush);
 app.use("/stkCallback", verifyToken, saveTransactionRoute);
+
+/* PAYMENT ROUTE */
+app.get("/:username", accountProfile);
 
 app.listen(4700, () => console.log("Server running on port 4700"));
