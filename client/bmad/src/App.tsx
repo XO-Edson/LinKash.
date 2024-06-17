@@ -6,6 +6,7 @@ import Bio from "./pages/Bio";
 import Main from "./pages/Main";
 import AccountInfo from "./pages/AccountInfo";
 import Profile from "./pages/Profile";
+import PaymentPage from "./pages/PaymentPage";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/account" element={<AccountInfo />} />
         <Route path="/main" element={<Main />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/:username" element={<PaymentPage />} />
       </Routes>
     </main>
   );

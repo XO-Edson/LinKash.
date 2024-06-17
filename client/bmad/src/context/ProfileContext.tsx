@@ -46,8 +46,6 @@ const ProfileProvider = ({ children }: ProviderProps) => {
   const { user } = useAuthContext();
   const [bio, setBio] = useState<BioType | null>(null);
   const token = Cookies.get("token");
-  //const navigate = useNavigate();
-  console.log(token);
 
   const [newName, setNewName] = useState({
     firstName: user?.first_name || "",
