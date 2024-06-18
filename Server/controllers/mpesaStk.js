@@ -31,12 +31,19 @@ async function access(req, res, next) {
 /* STK-Push FUNCTION */
 const stkPush = async (req, res) => {
   /* GETTING SHORTCODE FROM DB */
-  const userId = req.userId.userId;
+  const { username } = req.body;
+
+  const checkUsername = await pool.query(
+    "SELECT * FROM user_bio WHERE username = $1",
+    [username]
+  );
+  const userId = checkUsername.rows[0].user_id;
 
   const result = await pool.query(
     "SELECT shortcode FROM account_details WHERE user_id = $1",
     [userId]
   );
+
   const shortcode = result.rows[0].shortcode;
 
   const data = {
