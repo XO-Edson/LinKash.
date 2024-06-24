@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import NavbarAlt from "../components/NavbarAlt";
 import { useEffect, useState } from "react";
 import { UserInfo } from "../context/AuthContext";
+import bgImg from "../assets/ralph-mayhew-aIxIwhwKsLc-unsplash.jpg";
 
 function PaymentPage() {
   const { username } = useParams();
@@ -58,9 +59,20 @@ function PaymentPage() {
     <section>
       <NavbarAlt />
 
+      <header>
+        <img src={bgImg} alt="" className="h-[230px] w-full object-cover" />
+      </header>
+
+      <div className="rounded-md mx-auto w-[100px] h-[100px] ">
+        <img
+          src={bgImg}
+          className="object-cover w-full h-full rounded-md -mt-12"
+        />
+      </div>
+
       <article className="flex flex-col justify-center items-center w-[90%] md:w-[50%] mx-auto bg-gray-700 rounded-md p-4 mt-4">
         <p>{user?.email}</p>
-        <div className="p-3 bg-customGray/30 w-full rounded-md flex mb-3">
+        <div className="p-3 bg-customGray/30 w-full rounded-md flex mb-3 justify-evenly">
           <button
             className="py-2 px-6 rounded-3xl bg-customGray font-bold text-black scale m-2"
             onClick={() => handleButtonClick("100")}
@@ -101,12 +113,18 @@ function PaymentPage() {
         ></textarea>
 
         <button
-          className="py-2 px-6 rounded-3xl bg-customGray font-bold text-black scale m-2"
+          className="py-2 px-6 rounded-3xl bg-customGray font-bold text-black scale mt-4"
           onClick={handlePayment}
         >
           Make Payment
         </button>
       </article>
+
+      <article></article>
+
+      <footer className="mt-4 p-2 absolute bottom-0 w-full shadow-top text-xs">
+        Conceptualized from buymeacoffee.com
+      </footer>
     </section>
   );
 }
