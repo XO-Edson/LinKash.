@@ -3,11 +3,11 @@ import pg from "pg";
 const { Pool } = pg;
 
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "user_auth",
+  user: "postgres.wulnpdquhyxlimjelymz",
+  host: "aws-0-eu-central-1.pooler.supabase.com",
+  database: "postgres",
   password: process.env.PASSWORD,
-  port: 5432,
+  port: 6543,
 });
 
 pool.on("connect", () => console.log("Database connected..."));

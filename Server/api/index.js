@@ -1,14 +1,14 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import registerRoute from "./routes/registerRoute.js";
-import loginRoute from "./routes/loginRoute.js";
-import verifyToken from "./middleware/verifyToken.js";
-import userBio from "./routes/userBioRoute.js";
-import accountsRoute from "./routes/accountDetailsRoute.js";
-import { access, stkPush } from "./controllers/mpesaStk.js";
-import saveTransactionRoute from "./routes/saveTransactionRoute.js";
-import { accountProfile } from "./controllers/accountDetails.js";
+import registerRoute from "../routes/registerRoute.js";
+import loginRoute from "../routes/loginRoute.js";
+import verifyToken from "../middleware/verifyToken.js";
+import userBio from "../routes/userBioRoute.js";
+import accountsRoute from "../routes/accountDetailsRoute.js";
+import { access, stkPush } from "../controllers/mpesaStk.js";
+import saveTransactionRoute from "../routes/saveTransactionRoute.js";
+import { accountProfile } from "../controllers/accountDetails.js";
 
 dotenv.config();
 const app = express();
