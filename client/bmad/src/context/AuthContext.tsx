@@ -95,14 +95,17 @@ const AuthProvider = ({ children }: ProviderProps) => {
     if (!username || !description) return new Error("Username required");
 
     try {
-      const response = await fetch("http://localhost:4700/addBio", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ username, description }),
-      });
+      const response = await fetch(
+        "https://lin-kash-server.vercel.app/addBio",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ username, description }),
+        }
+      );
 
       if (!response.ok) throw new Error("Error registering");
 
@@ -120,13 +123,16 @@ const AuthProvider = ({ children }: ProviderProps) => {
     const reqBody = userInfo;
 
     try {
-      const response = await fetch("http://localhost:4700/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reqBody),
-      });
+      const response = await fetch(
+        "https://lin-kash-server.vercel.app/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(reqBody),
+        }
+      );
 
       if (!response.ok) throw new Error("Error registering");
 
@@ -150,7 +156,7 @@ const AuthProvider = ({ children }: ProviderProps) => {
     const reqBody = { email, password };
 
     try {
-      const response = await fetch("http://localhost:4700/login", {
+      const response = await fetch("https://lin-kash-server.vercel.app/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -196,14 +202,17 @@ const AuthProvider = ({ children }: ProviderProps) => {
     if (!shortcode) throw Error("Account missing");
 
     try {
-      const response = await fetch("http://localhost:4700/accountDetails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${Cookies.get("token")}`,
-        },
-        body: JSON.stringify({ shortcode }),
-      });
+      const response = await fetch(
+        "https://lin-kash-server.vercel.app/accountDetails",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${Cookies.get("token")}`,
+          },
+          body: JSON.stringify({ shortcode }),
+        }
+      );
 
       if (!response.ok) throw new Error("Error setting account");
       const data = await response.json();

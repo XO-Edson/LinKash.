@@ -7,7 +7,6 @@ import {
 } from "react";
 import { useAuthContext } from "./AuthContext";
 import Cookies from "js-cookie";
-//import { useNavigate } from "react-router-dom";
 
 type ProviderProps = {
   children: ReactNode;
@@ -65,13 +64,16 @@ const ProfileProvider = ({ children }: ProviderProps) => {
 
   const getBio = async () => {
     try {
-      const response = await fetch("http://localhost:4700/addBio/getBio", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        "https://lin-kash-server.vercel.app/addBio/getBio",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) throw new Error("Error fetching Bio");
 
@@ -87,18 +89,21 @@ const ProfileProvider = ({ children }: ProviderProps) => {
   }, []);
 
   const handleBioChanges = async () => {
-    const response = await fetch("http://localhost:4700/addBio/updateBio", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${Cookies.get("token")}`,
-      },
-      body: JSON.stringify({
-        firstName: newName.firstName,
-        lastName: newName.lastName,
-        email,
-      }),
-    });
+    const response = await fetch(
+      "https://lin-kash-server.vercel.app/addBio/updateBio",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${Cookies.get("token")}`,
+        },
+        body: JSON.stringify({
+          firstName: newName.firstName,
+          lastName: newName.lastName,
+          email,
+        }),
+      }
+    );
 
     if (!response.ok) throw new Error("Error setting account");
 
@@ -107,13 +112,16 @@ const ProfileProvider = ({ children }: ProviderProps) => {
   };
 
   const deleteAccount = async (callback: () => void) => {
-    const response = await fetch("http://localhost:4700/addBio/deleteAccount", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${Cookies.get("token")}`,
-      },
-    });
+    const response = await fetch(
+      "https://lin-kash-server.vercel.app/addBio/deleteAccount",
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      }
+    );
 
     if (!response.ok) throw new Error("Error deleting account");
 

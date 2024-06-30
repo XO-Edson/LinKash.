@@ -16,7 +16,7 @@ function Bio() {
     if (!username) return;
     try {
       const response = await fetch(
-        "http://localhost:4700/addBio/check-username",
+        "https://lin-kash-server.vercel.app/addBio/check-username",
         {
           method: "POST",
           headers: {

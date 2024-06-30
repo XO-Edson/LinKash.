@@ -12,12 +12,15 @@ function PaymentPage() {
   const [user, setUser] = useState<UserInfo | null>(null);
 
   const getPaymentProfile = async () => {
-    const response = await fetch(`http://localhost:4700/${username}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `https://lin-kash-server.vercel.app/${username}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Profile missing");
@@ -29,7 +32,7 @@ function PaymentPage() {
   };
 
   const handlePayment = async () => {
-    const response = await fetch("http://localhost:4700/stkPush", {
+    const response = await fetch("https://lin-kash-server.vercel.app/stkPush", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
