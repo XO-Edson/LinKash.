@@ -76,7 +76,7 @@ const stkPush = async (req, res) => {
     PartyA: `254${data.phone}`,
     PartyB: data.ShortCode,
     PhoneNumber: `254${data.phone}`,
-    CallBackURL: "https://a953-196-96-113-57.ngrok-free.app/stkCallback",
+    CallBackURL: "https://lin-kash-server.vercel.app/stkCallback",
     AccountReference: "Mpesa Test",
     TransactionDesc: "Test stk",
   };

@@ -1,4 +1,3 @@
-import { json } from "express";
 import pool from "../config/db.js";
 
 const accountInfo = async (req, res) => {
