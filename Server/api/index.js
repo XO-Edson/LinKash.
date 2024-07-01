@@ -13,9 +13,32 @@ import { accountProfile } from "../controllers/accountDetails.js";
 dotenv.config();
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:4700', 'https://lin-kash-client.vercel.app/"],
+    optionsSuccessStatus: 200,
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+/* app.use((req, res, next) => {
+  res.header(
+    "Access-Control-Allow-Origin",
+    "https://lin-kash-client.vercel.app/"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  next();
+}); */
+
+app.use("/", (req, res) => {
+  res.status(200).json({ message: "Server running okay..." });
+});
 
 /* AUTH ROUTES */
 app.use("/register", registerRoute);
