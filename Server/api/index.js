@@ -13,28 +13,9 @@ import { accountProfile } from "../controllers/accountDetails.js";
 dotenv.config();
 const app = express();
 
-app.use(
-  cors({
-    origin: ["http://localhost:4700', 'https://lin-kash-client.vercel.app/"],
-    optionsSuccessStatus: 200,
-  })
-);
-
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-/* app.use((req, res, next) => {
-  res.header(
-    "Access-Control-Allow-Origin",
-    "https://lin-kash-client.vercel.app/"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  next();
-}); */
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Server running okay..." });
@@ -53,5 +34,11 @@ app.use("/stkCallback", saveTransactionRoute);
 
 /* PAYMENT ROUTE */
 app.get("/:username", accountProfile);
+
+/* Error handler */
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
+});
 
 app.listen(4700, () => console.log("Server running on port 4700"));

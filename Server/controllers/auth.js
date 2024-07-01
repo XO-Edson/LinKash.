@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import pool from "../config/db.js";
 import jwt from "jsonwebtoken";
+import supabase from "./supabaseConfig.js";
 
 const register = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -35,26 +36,37 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   const { email, password } = req.body;
-  if ((!email, !password)) {
+
+  if (!email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  console.log(email, password);
   try {
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
-      email,
-    ]);
+    // Query the 'users' table in Supabase
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .single(); // Assuming email is unique and you expect one result
 
-    if (result.rows.length === 0) {
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!data) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    const user = result.rows[0];
 
+    const user = data;
+
+    // Compare hashed password with user input
     const isValid = await bcrypt.compare(password, user.password);
 
     if (!isValid) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
+
+    // Generate JWT token
     const token = jwt.sign({ userId: user.id }, process.env.ACCESS_TOKEN, {
       expiresIn: "3h",
     });
