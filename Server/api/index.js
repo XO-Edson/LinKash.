@@ -36,7 +36,7 @@ app.use(express.urlencoded({ extended: true }));
   next();
 }); */
 
-app.use("/", (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).json({ message: "Server running okay..." });
 });
 
