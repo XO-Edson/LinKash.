@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "Server running okay..." });
+  res.status(200).json({ message: "Server running..." });
 });
 
 /* AUTH ROUTES */
