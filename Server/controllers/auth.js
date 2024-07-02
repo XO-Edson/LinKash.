@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import pool from "../config/db.js";
 import jwt from "jsonwebtoken";
 import supabase from "./supabaseConfig.js";
 
@@ -10,24 +9,37 @@ const register = async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const existingEmail = await pool.query(
-    "SELECT * FROM users WHERE email = $1",
-    [email]
-  );
-
   try {
-    if (existingEmail.rows.length > 0)
-      return res.status(400).json({ message: "User already exists" });
+    // Check if user already exists
+    const { data: existingUser, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .single();
 
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const result = await pool.query(
-      "INSERT INTO users (first_name, last_name, email, password) VALUES($1, $2, $3, $4) RETURNING *",
-      [firstName, lastName, email, hashedPassword]
-    );
-    console.log(result.rows);
+    // Insert new user into the 'users' table
+    const { data: newUser, insertError } = await supabase.from("users").insert([
+      {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        password: hashedPassword,
+      },
+    ]);
 
-    res.status(201).json(result.rows[0]);
+    if (insertError) {
+      throw new Error(insertError.message);
+    }
+
+    // Return the newly created user
+    res.status(201).json(newUser[0]);
   } catch (error) {
     console.error(error.message);
     return res.status(400).json({ message: "Error registering user" });

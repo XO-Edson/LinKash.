@@ -1,20 +1,22 @@
-import pool from "../config/db.js";
+import supabase from "./supabaseConfig.js";
 
 const addUserBio = async (req, res) => {
   const { username, description } = req.body;
   const { userId } = req.userId;
 
-  if (!username || !description)
-    res.status(400).json({ message: "All fields required" });
+  if (!username || !description) {
+    return res.status(400).json({ message: "All fields required" });
+  }
 
-  /* ADDING NEW USERNAME */
   try {
-    const result = await pool.query(
-      "INSERT INTO user_bio(user_id, username, description) VALUES ($1, $2, $3) RETURNING *",
-      [userId, username, description]
-    );
+    const { data, error } = await supabase
+      .from("user_bio")
+      .insert([{ user_id: userId, username, description }])
+      .single();
 
-    res.status(201).json(result.rows[0]);
+    if (error) throw error;
+
+    res.status(201).json(data);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Error inserting user bio" });
@@ -25,12 +27,15 @@ const getBio = async (req, res) => {
   const { userId } = req.userId;
 
   try {
-    const result = await pool.query(
-      "SELECT * FROM user_bio WHERE user_id = $1",
-      [userId]
-    );
+    const { data, error } = await supabase
+      .from("user_bio")
+      .select("*")
+      .eq("user_id", userId)
+      .single();
 
-    res.status(200).json(result.rows[0]);
+    if (error) throw error;
+
+    res.status(200).json(data);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Error fetching bio" });
@@ -40,16 +45,17 @@ const getBio = async (req, res) => {
 const checkUsername = async (req, res) => {
   const { username } = req.body;
 
-  if (!username) return res.json({ message: "username required" });
+  if (!username) return res.json({ message: "Username required" });
 
-  /* CHECKING FOR DUPLICATE USERNAME */
   try {
-    const usernameExists = await pool.query(
-      "SELECT username FROM user_bio WHERE username = $1",
-      [username]
-    );
+    const { data, error } = await supabase
+      .from("user_bio")
+      .select("username")
+      .eq("username", username);
 
-    if (usernameExists.rows.length > 0) {
+    if (error) throw error;
+
+    if (data.length > 0) {
       return res.status(400).json({ message: "Username already exists" });
     }
 
@@ -64,39 +70,44 @@ const updateBio = async (req, res) => {
   const { firstName, lastName, email } = req.body;
   const { userId } = req.userId;
 
-  console.log(firstName, lastName, email);
-  if (!firstName || !lastName || !email)
+  if (!firstName || !lastName || !email) {
     return res.status(400).json({ message: "Name and email required" });
+  }
 
   try {
-    const updatePersonalInfo = await pool.query(
-      `UPDATE users SET first_name = $1, last_name = $2, email = $3 WHERE id = $4`,
-      [firstName, lastName, email, userId]
-    );
+    const { error } = await supabase
+      .from("users")
+      .update({ first_name: firstName, last_name: lastName, email })
+      .eq("id", userId);
+
+    if (error) throw error;
 
     res.status(201).json({ message: "Bio updated!" });
   } catch (error) {
     console.error(error, "error updating bio");
+    res.status(500).json({ message: "Error updating bio" });
   }
 };
 
 const deleteUser = async (req, res) => {
   const { userId } = req.userId;
 
-  console.log(userId);
-
   try {
-    const result = await pool.query("DELETE FROM users WHERE id=$1", [userId]);
+    const { error, count } = await supabase
+      .from("users")
+      .delete()
+      .eq("id", userId);
 
-    if (result.rowCount === 0) {
+    if (error) throw error;
+
+    if (count === 0) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    console.log(result.rows);
 
     res.status(200).json({ message: "Account deleted successfully" });
   } catch (error) {
     console.error(error, "error deleting account");
+    res.status(500).json({ message: "Error deleting account" });
   }
 };
 

@@ -1,8 +1,8 @@
 import axios from "axios";
-import pool from "../config/db.js";
+import supabase from "./supabaseConfig.js";
 
 /* ACCESS TOKEN FUNCTION */
-async function access(req, res, next) {
+const access = async (req, res, next) => {
   try {
     let auth = Buffer.from(
       "QGkAJzr4kHwWFoPhNPCISF3ksa0tCE3mv3XeGh9BmrJ7v7aF:pI99cgAU9YmS5XU9ySzCdkpz8KCKR7mQNvXt2A88wzrNoKwVz41q9FPNcFOSfVky"
@@ -26,25 +26,36 @@ async function access(req, res, next) {
       .status(500)
       .json({ message: "An error occurred", error: error.message });
   }
-}
+};
 
 /* STK-Push FUNCTION */
 const stkPush = async (req, res) => {
   /* GETTING SHORTCODE FROM DB */
   const { username } = req.body;
 
-  const checkUsername = await pool.query(
-    "SELECT * FROM user_bio WHERE username = $1",
-    [username]
-  );
-  const userId = checkUsername.rows[0].user_id;
+  const { data: userBio, error: userBioError } = await supabase
+    .from("user_bio")
+    .select("*")
+    .eq("username", username)
+    .single();
 
-  const result = await pool.query(
-    "SELECT shortcode FROM account_details WHERE user_id = $1",
-    [userId]
-  );
+  if (userBioError) {
+    return res.status(400).json({ message: "Username not found" });
+  }
 
-  const shortcode = result.rows[0].shortcode;
+  const userId = userBio.user_id;
+
+  const { data: accountDetail, error: accountDetailError } = await supabase
+    .from("account_details")
+    .select("shortcode")
+    .eq("user_id", userId)
+    .single();
+
+  if (accountDetailError) {
+    return res.status(400).json({ message: "Shortcode not found" });
+  }
+
+  const shortcode = accountDetail.shortcode;
 
   const data = {
     ShortCode: shortcode,
@@ -63,7 +74,7 @@ const stkPush = async (req, res) => {
     ("0" + date.getMinutes()).slice(-2) +
     ("0" + date.getSeconds()).slice(-2);
 
-  const password = new Buffer.from(
+  const password = Buffer.from(
     data.ShortCode + data.passkey + timestamp
   ).toString("base64");
 
@@ -99,28 +110,34 @@ const stkPush = async (req, res) => {
 
 const saveToDatabase = async (values) => {
   try {
-    const result = await pool.query(
-      "INSERT INTO transaction (merchant_request_id,checkout_request_id,result_code,result_description,amount,mpesa_receipt_number,balance,transaction_date,phone_number) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *",
-      [
-        values.MerchantRequestID,
-        values.CheckoutRequestID,
-        values.ResultCode,
-        values.ResultDesc,
-        values.Amount,
-        values.MpesaReceiptNumber,
-        values.Balance,
-        values.TransactionDate,
-        values.PhoneNumber,
-      ]
-    );
+    const { data: transaction, error } = await supabase
+      .from("transaction")
+      .insert([
+        {
+          merchant_request_id: values.MerchantRequestID,
+          checkout_request_id: values.CheckoutRequestID,
+          result_code: values.ResultCode,
+          result_description: values.ResultDesc,
+          amount: values.Amount,
+          mpesa_receipt_number: values.MpesaReceiptNumber,
+          balance: values.Balance,
+          transaction_date: values.TransactionDate,
+          phone_number: values.PhoneNumber,
+        },
+      ])
+      .single();
 
-    res.status(201).json(result.rows[0]);
+    if (error) {
+      throw error;
+    }
+
+    return transaction;
   } catch (error) {
     console.error({ error: "transaction missing" });
   }
 };
 
-const saveTransaction = (req, res) => {
+const saveTransaction = async (req, res) => {
   console.log(req.body);
 
   const data = req.body.Body.stkCallback;
@@ -138,16 +155,19 @@ const saveTransaction = (req, res) => {
     ResultDesc: data.ResultDesc,
     Amount: data.CallbackMetadata?.Item[0].Value,
     MpesaReceiptNumber: data.CallbackMetadata?.Item[1].Value,
-    Balance: data.CallbackMetadata?.Item[2].Value,
+    Balance: data.CallbackMetadata?.Item[2]?.Value || 0,
     TransactionDate: data.CallbackMetadata?.Item[3].Value,
     PhoneNumber: data.CallbackMetadata?.Item[4].Value,
   };
 
-  saveToDatabase(transaction);
+  const savedTransaction = await saveToDatabase(transaction);
 
-  console.log("Transaction saved");
-
-  res.sendStatus(200);
+  if (savedTransaction) {
+    console.log("Transaction saved");
+    res.sendStatus(200);
+  } else {
+    res.status(500).json({ error: "Failed to save transaction" });
+  }
 };
 
 export { access, stkPush, saveTransaction };

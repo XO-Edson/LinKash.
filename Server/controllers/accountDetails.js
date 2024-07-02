@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import supabase from "./supabaseConfig.js";
 
 const accountInfo = async (req, res) => {
   const { shortcode } = req.body;
@@ -9,13 +9,20 @@ const accountInfo = async (req, res) => {
 
   /* CHECKING FOR DUPLICATE SHORTCODE */
   try {
-    const response = await pool.query(
-      "SELECT shortcode FROM account_details WHERE shortcode = $1 ",
-      [shortcode]
-    );
+    const { data: existingShortcode, error: fetchError } = await supabase
+      .from("account_details")
+      .select("shortcode")
+      .eq("shortcode", shortcode)
+      .single();
 
-    if (response.rows.length > 0)
+    if (fetchError && fetchError.code !== "PGRST116") {
+      // 'PGRST116' indicates no matching row found
+      throw new Error(fetchError.message);
+    }
+
+    if (existingShortcode) {
       return res.status(400).json({ message: "Shortcode already exists" });
+    }
   } catch (error) {
     console.error(error.message);
     return res.status(400).json({ message: "Error getting account details" });
@@ -23,38 +30,49 @@ const accountInfo = async (req, res) => {
 
   /* ADDING SHORTCODE */
   try {
-    const response = await pool.query(
-      "INSERT INTO account_details(shortcode,user_id) VALUES($1,$2) RETURNING *",
-      [shortcode, userId.userId]
-    );
+    const { data: newAccountDetail, error: insertError } = await supabase
+      .from("account_details")
+      .insert([{ shortcode, user_id: userId.userId }])
+      .single();
 
-    res.status(201).json(response.rows[0]);
+    if (insertError) {
+      throw new Error(insertError.message);
+    }
+
+    res.status(201).json(newAccountDetail);
   } catch (error) {
     console.error(error.message);
-    return res.status(400).json({ message: "Error getting account details" });
+    return res.status(400).json({ message: "Error adding account details" });
   }
 };
 
 const accountProfile = async (req, res) => {
   const { username } = req.params;
 
-  const checkUsername = await pool.query(
-    "SELECT * FROM user_bio WHERE username = $1",
-    [username]
-  );
-
-  if (checkUsername.rows.length === 0) {
-    res.status(400).json({ message: "Username missing" });
-  }
-
   try {
-    const userId = checkUsername.rows[0].user_id;
+    const { data: userBio, error: fetchBioError } = await supabase
+      .from("user_bio")
+      .select("*")
+      .eq("username", username)
+      .single();
 
-    const userData = await pool.query("SELECT * FROM users WHERE id = $1", [
-      userId,
-    ]);
+    if (fetchBioError) {
+      return res.status(400).json({ message: "Username missing" });
+    }
 
-    res.status(200).json(userData.rows[0]);
+    const userId = userBio.user_id;
+
+    const { data: userData, error: fetchUserError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    if (fetchUserError) {
+      throw new Error(fetchUserError.message);
+    }
+
+    res.status(200).json(userData);
   } catch (error) {
     console.error(error.message);
     return res.status(400).json({ message: "Error getting user page" });
