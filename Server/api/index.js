@@ -9,6 +9,7 @@ import accountsRoute from "../routes/accountDetailsRoute.js";
 import { access, stkPush } from "../controllers/mpesaStk.js";
 import saveTransactionRoute from "../routes/saveTransactionRoute.js";
 import { accountProfile } from "../controllers/accountDetails.js";
+import networkTestRoute from "../routes/network-test.js";
 
 dotenv.config();
 const app = express();
@@ -24,6 +25,8 @@ app.get("/", (req, res) => {
 /* AUTH ROUTES */
 app.use("/register", registerRoute);
 app.use("/login", loginRoute);
+
+app.use("/network-test", access, networkTestRoute);
 
 /* ROUTES */
 app.use("/addBio", verifyToken, userBio);

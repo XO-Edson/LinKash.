@@ -95,6 +95,8 @@ const stkPush = async (req, res) => {
     TransactionDesc: "Test stk",
   };
 
+  console.log("Request Body:", reqBody);
+
   try {
     const response = await axios.post(data.url, reqBody, {
       headers: {
@@ -103,8 +105,11 @@ const stkPush = async (req, res) => {
       },
     });
 
+    console.log("Response Data:", response.data);
+
     res.status(200).json(response.data);
   } catch (error) {
+    console.error("Error during STK push:", error);
     res
       .status(500)
       .json({ message: "An error occurred!", error: error.message });
