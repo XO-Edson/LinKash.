@@ -21,7 +21,10 @@ const access = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log(error);
+    console.error(
+      "Error details:",
+      error.response ? error.response.data : error.message
+    );
     res
       .status(500)
       .json({ message: "An error occurred", error: error.message });
@@ -104,7 +107,7 @@ const stkPush = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: "An error occurred", error: error.message });
+      .json({ message: "An error occurred!", error: error.message });
   }
 };
 

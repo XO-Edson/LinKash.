@@ -3,6 +3,6 @@ import { stkPush } from "../controllers/mpesaStk.js";
 
 const router = Router();
 
-router.post("/stkpush", stkPush);
+router.post("/", stkPush);
 
 export default router;
